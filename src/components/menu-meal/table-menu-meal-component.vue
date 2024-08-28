@@ -57,7 +57,6 @@ import ValidButton from "../ui/valid-button-component.vue";
 
 import {
   MEAL_TIME_MAPPER_ENG_KOR,
-  MEAL_TIME_MAPPER_KOR_ENG,
   MEAL_TABLE_ARRAY_INFO_ENG,
 } from "./constants";
 
@@ -81,7 +80,6 @@ export default {
   data() {
     return {
       mealTimeMapperEngKor: MEAL_TIME_MAPPER_ENG_KOR,
-      mealTimeMapperKorEng: MEAL_TIME_MAPPER_KOR_ENG,
       mealTableArrayInfoEngs: MEAL_TABLE_ARRAY_INFO_ENG,
     };
   },

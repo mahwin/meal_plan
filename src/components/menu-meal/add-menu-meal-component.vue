@@ -70,6 +70,7 @@ export default {
     isDisabled() {
       return !this.isUserInputMenuValid(this.userInputMenu);
     },
+
     isUserSelectedOptionCanAdd() {
       const currentUserSelectMealTime = this.mealInfo["time"];
       const currentUserSelectMealMenu = this.mealInfo["menu"];

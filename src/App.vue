@@ -61,6 +61,9 @@ export default {
   // },
 
   methods: {
+    /**
+     * 사용된 메뉴인지 필터링하는 기능.
+     */
     filterMenu() {
       const selectedMenus = Object.values(this.totalMealInfo);
 
