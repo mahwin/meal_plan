@@ -4,11 +4,18 @@
     <MenuMealAdd
       :menus="menus"
       :userSelectMealInfo="userSelectMealInfo"
+      :useSelectMealTableInfo="useSelectMealTableInfo"
+      @update:menu="handleChangeMenu"
       @update:add-menu="handleAddMenu"
       @update:food-kind="handleChangeFoodKind"
-      @update:menu="handleChangeMenu"
+      @update:add-meal-info="handleAddMealInfo"
     />
-    <MenuMealTable :mealTableInfos="mealTableInfos" />
+    <MenuMealTable
+      :mealTableInfos="mealTableInfos"
+      :useSelectMealTableInfo="useSelectMealTableInfo"
+      @update:meal-date-info="handleUpdateMealDateInfo"
+      @update:add-meal-table-info="handleAddMealTableInfo"
+    />
   </div>
 </template>
 
@@ -16,9 +23,10 @@
 import MenuMealAdd from "./components/menu-meal/add-menu-meal-component.vue";
 import MenuMealTable from "./components/menu-meal/table-menu-meal-component.vue";
 import Title from "./components/ui/title-component.vue";
+
 import {
-  DEFAULT_MEAL_TIME,
   DEFAULT_MENU,
+  DEFAULT_MEAL_TIME,
 } from "./components/menu-meal/constants";
 
 import { MENUS, MEAL_TABLE_INFOS } from "./components/menu-meal/db";
@@ -33,13 +41,18 @@ export default {
   data: function () {
     return {
       menus: MENUS,
+      // 식단 추가용
       userSelectMealInfo: {},
+      // 식단표 추가용
+      useSelectMealTableInfo: {
+        date: "",
+        breakfast: "",
+        lunch: "",
+        dinner: "",
+      },
+      // 식단표 표시용
       mealTableInfos: MEAL_TABLE_INFOS,
     };
-  },
-
-  mounted() {
-    this.initUserSelectedMealInfo();
   },
 
   methods: {
@@ -47,6 +60,15 @@ export default {
       this.userSelectMealInfo = {
         time: DEFAULT_MEAL_TIME,
         menu: DEFAULT_MENU,
+      };
+    },
+
+    initUseSelectMealTableInfo: function () {
+      this.useSelectMealTableInfo = {
+        date: "",
+        launch: "",
+        dinner: "",
+        breakfast: "",
       };
     },
 
@@ -60,6 +82,25 @@ export default {
     handleChangeMenu: function (menu) {
       this.userSelectMealInfo.menu = menu;
     },
+
+    handleAddMealInfo: function ({ time, menu }) {
+      this.useSelectMealTableInfo[time] = menu;
+      this.initUserSelectedMealInfo();
+      console.log(this.userSelectMealInfo);
+    },
+    handleUpdateMealDateInfo: function (newDate) {
+      this.useSelectMealTableInfo.date = newDate;
+    },
+
+    handleAddMealTableInfo: function () {
+      this.mealTableInfos.push({ ...this.useSelectMealTableInfo });
+      console.log(this.useSelectMealTableInfo);
+      this.initUseSelectMealTableInfo();
+      console.log(this.useSelectMealTableInfo);
+    },
+  },
+  mounted() {
+    this.initUserSelectedMealInfo();
   },
 };
 </script>

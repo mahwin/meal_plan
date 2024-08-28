@@ -1,11 +1,26 @@
 <template>
   <div class="container">
     <SubTitle title="선택된 식단" />
-    <div class="time">
-      <label>날짜: <input type="text" /> </label>
-      <label>아침:</label>
-      <label>점심:</label>
-      <label>저녁:</label>
+    <ul class="time">
+      <li v-for="mealTableKey in mealTableArrayInfoEngs" :key="mealTableKey">
+        <div>
+          {{ mealTimeMapperEngKor[mealTableKey] }}
+          <input
+            v-if="mealTableKey === 'date'"
+            :value="useSelectMealTableInfo['date']"
+            @input="handleInputDate"
+          />
+          <span v-else>{{ useSelectMealTableInfo[mealTableKey] }}</span>
+        </div>
+      </li>
+    </ul>
+    <div class="flex-end">
+      <ValidButton
+        @click="handleAddMealTableInfo"
+        validName="추가"
+        unValidName="데이터 확인"
+        :isValid="isUserSelectedOptionCanAdd"
+      />
     </div>
     <SubTitle title="식단표" />
     <div class="meal_cards">
@@ -16,17 +31,17 @@
       >
         <h3>{{ mealTableInfo["date"] }}</h3>
         <p>
-          <strong> {{ mealTimeMapper["breakfast"] }}: </strong>
+          <strong> {{ mealTimeMapperEngKor["breakfast"] }}: </strong>
           {{ mealTableInfo["breakfast"] }}
         </p>
 
         <p>
-          <strong> {{ mealTimeMapper["lunch"] }}: </strong>
+          <strong> {{ mealTimeMapperEngKor["lunch"] }}: </strong>
           {{ mealTableInfo["lunch"] }}
         </p>
 
         <p>
-          <strong> {{ mealTimeMapper["dinner"] }}: </strong>
+          <strong> {{ mealTimeMapperEngKor["dinner"] }}: </strong>
           {{ mealTableInfo["dinner"] }}
         </p>
       </section>
@@ -35,9 +50,15 @@
 </template>
 
 <script>
+import { isNilOrEmpty } from "@/utils";
 import SubTitle from "../ui/sub-title-component.vue";
+import ValidButton from "../ui/valid-button-component.vue";
 
-import { MEAL_TIME_MAPPER } from "./constants";
+import {
+  MEAL_TIME_MAPPER_ENG_KOR,
+  MEAL_TIME_MAPPER_KOR_ENG,
+  MEAL_TABLE_ARRAY_INFO_ENG,
+} from "./constants";
 
 export default {
   name: "TableMenuMeal",
@@ -46,15 +67,37 @@ export default {
       type: Array,
       required: true,
     },
+    useSelectMealTableInfo: {
+      type: Object,
+      required: true,
+    },
   },
   components: {
     SubTitle,
+    ValidButton,
   },
 
   data() {
     return {
-      mealTimeMapper: MEAL_TIME_MAPPER,
+      mealTimeMapperEngKor: MEAL_TIME_MAPPER_ENG_KOR,
+      mealTimeMapperKorEng: MEAL_TIME_MAPPER_KOR_ENG,
+      mealTableArrayInfoEngs: MEAL_TABLE_ARRAY_INFO_ENG,
     };
+  },
+  methods: {
+    handleInputDate(e) {
+      this.$emit("update:meal-date-info", e.target.value);
+    },
+    handleAddMealTableInfo: function () {
+      this.$emit("update:add-meal-table-info");
+    },
+  },
+  computed: {
+    isUserSelectedOptionCanAdd() {
+      return Object.values(this.useSelectMealTableInfo).every(
+        (mealInfo) => !isNilOrEmpty(mealInfo)
+      );
+    },
   },
 };
 </script>
@@ -86,5 +129,14 @@ export default {
 p {
   font-weight: 300;
   font-size: 12px;
+}
+
+.flex-end {
+  display: flex;
+  justify-content: flex-end;
+}
+
+li {
+  list-style: none;
 }
 </style>

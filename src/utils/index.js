@@ -13,3 +13,7 @@ export function isEmpty(value) {
   if (type === "object") return Object.keys(value).length === 0;
   return false;
 }
+
+export function isNilOrEmpty(value) {
+  return isNil(value) || isEmpty(value);
+}

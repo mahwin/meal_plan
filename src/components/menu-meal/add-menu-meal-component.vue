@@ -20,14 +20,20 @@
     <label for="food_menu"
       >메뉴
       <select @change="handleChangeMenu" :value="userSelectMealInfo['menu']">
-        <option v-for="menu in menus" :key="menu">{{ menu }}</option>
+        <!-- <option v-for="filteredMenu in filteredMenus" :key="filteredMenu">
+          {{ filteredMenu }}
+        </option> -->
+        <option v-for="menu in menus" :key="menu">
+          {{ menu }}
+        </option>
       </select></label
     >
     <div class="flex-end">
       <ValidButton
         validName="추가"
         unValidName="데이터 확인"
-        :isValid="false"
+        @click="handleAddMealInfo"
+        :isValid="isUserSelectedOptionCanAdd"
       />
     </div>
   </section>
@@ -37,9 +43,9 @@
 import SubTitle from "../ui/sub-title-component.vue";
 import ValidButton from "../ui/valid-button-component.vue";
 
-import { MEAL_TIME_OPTIONS } from "./constants";
+import { MEAL_TIME_OPTIONS, MEAL_TIME_MAPPER_KOR_ENG } from "./constants";
 
-import { isNil, isEmpty } from "@/utils";
+import { isNilOrEmpty } from "@/utils";
 
 export default {
   name: "MenuMeal",
@@ -56,17 +62,34 @@ export default {
       type: Object,
       required: true,
     },
+    useSelectMealTableInfo: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
       userInputMenu: "",
       meal_time_options: MEAL_TIME_OPTIONS,
+      mealTimeMapperKorEng: MEAL_TIME_MAPPER_KOR_ENG,
     };
   },
 
   computed: {
     isDisabled() {
-      return !this.isValid(this.userInputMenu);
+      return !this.isUserInputMenuValid(this.userInputMenu);
+    },
+    isUserSelectedOptionCanAdd() {
+      const currentUserSelectMealTime = this.userSelectMealInfo["time"];
+      const currentUserSelectMealMenu = this.userSelectMealInfo["menu"];
+
+      if (isNilOrEmpty(currentUserSelectMealTime)) return false;
+      if (isNilOrEmpty(currentUserSelectMealMenu)) return false;
+      return true;
+    },
+    filteredMenus() {
+      const selectedMenus = Object.values(this.useSelectMealTableInfo);
+      return this.menus.filter((menu) => !selectedMenus.includes(menu));
     },
   },
 
@@ -80,14 +103,10 @@ export default {
       this.initUserInputMenu();
     },
 
-    isValid(userInput) {
-      if (isNil(userInput) || isEmpty(userInput)) {
-        return false;
-      }
+    isUserInputMenuValid(userInput) {
+      if (isNilOrEmpty(userInput)) return false;
 
-      if (this.menus.includes(userInput)) {
-        return false;
-      }
+      if (this.menus.includes(userInput)) return false;
 
       return true;
     },
@@ -96,6 +115,15 @@ export default {
     },
     handleChangeMenu({ currentTarget }) {
       this.$emit("update:menu", currentTarget.value);
+    },
+
+    handleAddMealInfo() {
+      const { menu, time } = this.userSelectMealInfo;
+
+      this.$emit("update:add-meal-info", {
+        menu,
+        time: this.mealTimeMapperKorEng[time],
+      });
     },
   },
 };
