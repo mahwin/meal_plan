@@ -2,7 +2,7 @@
   <div id="app">
     <Title title="식단 만들기" />
     <MenuMealAdd
-      :menus="menus"
+      :menus="filteredMenus"
       :userSelectMealInfo="userSelectMealInfo"
       :useSelectMealTableInfo="useSelectMealTableInfo"
       @update:menu="handleChangeMenu"
@@ -24,10 +24,7 @@ import MenuMealAdd from "./components/menu-meal/add-menu-meal-component.vue";
 import MenuMealTable from "./components/menu-meal/table-menu-meal-component.vue";
 import Title from "./components/ui/title-component.vue";
 
-import {
-  DEFAULT_MENU,
-  DEFAULT_MEAL_TIME,
-} from "./components/menu-meal/constants";
+import { DEFAULT_MEAL_TIME } from "./components/menu-meal/constants";
 
 import { MENUS, MEAL_TABLE_INFOS } from "./components/menu-meal/db";
 
@@ -54,12 +51,18 @@ export default {
       mealTableInfos: MEAL_TABLE_INFOS,
     };
   },
+  computed: {
+    filteredMenus() {
+      const selectedMenus = Object.values(this.useSelectMealTableInfo);
+      return [...this.menus.filter((menu) => !selectedMenus.includes(menu))];
+    },
+  },
 
   methods: {
     initUserSelectedMealInfo: function () {
       this.userSelectMealInfo = {
         time: DEFAULT_MEAL_TIME,
-        menu: DEFAULT_MENU,
+        menu: this.filteredMenus[0],
       };
     },
 

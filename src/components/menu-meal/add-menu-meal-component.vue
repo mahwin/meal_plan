@@ -19,10 +19,7 @@
     >
     <label for="food_menu"
       >메뉴
-      <select @change="handleChangeMenu" :value="userSelectMealInfo['menu']">
-        <!-- <option v-for="filteredMenu in filteredMenus" :key="filteredMenu">
-          {{ filteredMenu }}
-        </option> -->
+      <select @change="handleChangeMenu">
         <option v-for="menu in menus" :key="menu">
           {{ menu }}
         </option>
@@ -87,10 +84,6 @@ export default {
       if (isNilOrEmpty(currentUserSelectMealMenu)) return false;
       return true;
     },
-    filteredMenus() {
-      const selectedMenus = Object.values(this.useSelectMealTableInfo);
-      return this.menus.filter((menu) => !selectedMenus.includes(menu));
-    },
   },
 
   methods: {
@@ -116,7 +109,6 @@ export default {
     handleChangeMenu({ currentTarget }) {
       this.$emit("update:menu", currentTarget.value);
     },
-
     handleAddMealInfo() {
       const { menu, time } = this.userSelectMealInfo;
 

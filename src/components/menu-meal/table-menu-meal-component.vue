@@ -8,7 +8,8 @@
           <input
             v-if="mealTableKey === 'date'"
             :value="useSelectMealTableInfo['date']"
-            @input="handleInputDate"
+            type="date"
+            @input="handleChangeDate"
           />
           <span v-else>{{ useSelectMealTableInfo[mealTableKey] }}</span>
         </div>
@@ -85,7 +86,7 @@ export default {
     };
   },
   methods: {
-    handleInputDate(e) {
+    handleChangeDate(e) {
       this.$emit("update:meal-date-info", e.target.value);
     },
     handleAddMealTableInfo: function () {
