@@ -7,11 +7,11 @@
           {{ mealTimeMapperEngKor[mealTableKey] }}
           <input
             v-if="mealTableKey === 'date'"
-            :value="useSelectMealTableInfo['date']"
+            :value="totalMealInfo['date']"
             type="date"
             @input="handleChangeDate"
           />
-          <span v-else>{{ useSelectMealTableInfo[mealTableKey] }}</span>
+          <span v-else>{{ totalMealInfo[mealTableKey] }}</span>
         </div>
       </li>
     </ul>
@@ -68,7 +68,7 @@ export default {
       type: Array,
       required: true,
     },
-    useSelectMealTableInfo: {
+    totalMealInfo: {
       type: Object,
       required: true,
     },
@@ -87,15 +87,15 @@ export default {
   },
   methods: {
     handleChangeDate(e) {
-      this.$emit("update:meal-date-info", e.target.value);
+      this.$emit("update:change-total-meal-info-date", e.target.value);
     },
     handleAddMealTableInfo: function () {
-      this.$emit("update:add-meal-table-info");
+      this.$emit("update:add-meal-table-total-meal-info");
     },
   },
   computed: {
     isUserSelectedOptionCanAdd() {
-      return Object.values(this.useSelectMealTableInfo).every(
+      return Object.values(this.totalMealInfo).every(
         (mealInfo) => !isNilOrEmpty(mealInfo)
       );
     },

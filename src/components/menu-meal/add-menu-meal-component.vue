@@ -6,12 +6,9 @@
       <button :disabled="isDisabled" @click="addMenu">추가</button>
     </div>
     <SubTitle title="식단 추가" />
-    <label for="food_kind"
+    <label for="time_kind"
       >종류
-      <select
-        @change="handleChangeFoodKind"
-        :value="userSelectMealInfo['time']"
-      >
+      <select @change="handleChangeTimeKind" :value="mealInfo['time']">
         <option v-for="time in meal_time_options" :key="time.value">
           {{ time.label }}
         </option>
@@ -55,11 +52,8 @@ export default {
       type: Array,
       required: true,
     },
-    userSelectMealInfo: {
-      type: Object,
-      required: true,
-    },
-    useSelectMealTableInfo: {
+
+    mealInfo: {
       type: Object,
       required: true,
     },
@@ -77,8 +71,8 @@ export default {
       return !this.isUserInputMenuValid(this.userInputMenu);
     },
     isUserSelectedOptionCanAdd() {
-      const currentUserSelectMealTime = this.userSelectMealInfo["time"];
-      const currentUserSelectMealMenu = this.userSelectMealInfo["menu"];
+      const currentUserSelectMealTime = this.mealInfo["time"];
+      const currentUserSelectMealMenu = this.mealInfo["menu"];
 
       if (isNilOrEmpty(currentUserSelectMealTime)) return false;
       if (isNilOrEmpty(currentUserSelectMealMenu)) return false;
@@ -103,15 +97,17 @@ export default {
 
       return true;
     },
-    handleChangeFoodKind({ currentTarget }) {
-      this.$emit("update:food-kind", currentTarget.value);
-    },
-    handleChangeMenu({ currentTarget }) {
-      this.$emit("update:menu", currentTarget.value);
-    },
-    handleAddMealInfo() {
-      const { menu, time } = this.userSelectMealInfo;
 
+    handleChangeMenu({ currentTarget }) {
+      this.$emit("update:change-menu", currentTarget.value);
+    },
+
+    handleChangeTimeKind({ currentTarget }) {
+      this.$emit("update:change-time-kind", currentTarget.value);
+    },
+
+    handleAddMealInfo() {
+      const { menu, time } = this.mealInfo;
       this.$emit("update:add-meal-info", {
         menu,
         time: this.mealTimeMapperKorEng[time],

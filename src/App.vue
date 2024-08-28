@@ -3,18 +3,17 @@
     <Title title="식단 만들기" />
     <MenuMealAdd
       :menus="filteredMenus"
-      :userSelectMealInfo="userSelectMealInfo"
-      :useSelectMealTableInfo="useSelectMealTableInfo"
-      @update:menu="handleChangeMenu"
+      :mealInfo="mealInfo"
       @update:add-menu="handleAddMenu"
-      @update:food-kind="handleChangeFoodKind"
-      @update:add-meal-info="handleAddMealInfo"
+      @update:add-meal-info="handleAddMealInfoToTotalMealInfo"
+      @update:change-menu="handleChangeMenu"
+      @update:change-time-kind="handleChangeTimeKind"
     />
     <MenuMealTable
+      :totalMealInfo="totalMealInfo"
       :mealTableInfos="mealTableInfos"
-      :useSelectMealTableInfo="useSelectMealTableInfo"
-      @update:meal-date-info="handleUpdateMealDateInfo"
-      @update:add-meal-table-info="handleAddMealTableInfo"
+      @update:change-total-meal-info-date="handleChangeTotalMealInfoDate"
+      @update:add-meal-table-total-meal-info="handleAddMealTableTotalMealInfo"
     />
   </div>
 </template>
@@ -37,37 +36,50 @@ export default {
   },
   data: function () {
     return {
-      menus: MENUS,
+      menus: [...MENUS],
+      filteredMenus: [],
       // 식단 추가용
-      userSelectMealInfo: {},
+
+      mealInfo: {},
+
       // 식단표 추가용
-      useSelectMealTableInfo: {
-        date: "",
-        breakfast: "",
-        lunch: "",
-        dinner: "",
-      },
+      totalMealInfo: { date: "", breakfast: "", lunch: "", dinner: "" },
+
       // 식단표 표시용
       mealTableInfos: MEAL_TABLE_INFOS,
     };
   },
-  computed: {
-    filteredMenus() {
-      const selectedMenus = Object.values(this.useSelectMealTableInfo);
-      return [...this.menus.filter((menu) => !selectedMenus.includes(menu))];
-    },
-  },
+  // computed: {
+  //   filteredMenus() {
+  //     const selectedMenus = Object.values(this.totalMealInfo);
+
+  //     const sorted = [
+  //       ...this.menus.filter((menu) => !selectedMenus.includes(menu)),
+  //     ];
+  //     return sorted;
+  //   },
+  // },
 
   methods: {
-    initUserSelectedMealInfo: function () {
-      this.userSelectMealInfo = {
+    filterMenu() {
+      const selectedMenus = Object.values(this.totalMealInfo);
+
+      this.filteredMenus = [
+        ...this.menus.filter((menu) => !selectedMenus.includes(menu)),
+      ];
+    },
+
+    initMealInfo: function () {
+      this.filterMenu();
+
+      this.mealInfo = {
         time: DEFAULT_MEAL_TIME,
         menu: this.filteredMenus[0],
       };
     },
 
-    initUseSelectMealTableInfo: function () {
-      this.useSelectMealTableInfo = {
+    initTotalMealInfo: function () {
+      this.totalMealInfo = {
         date: "",
         launch: "",
         dinner: "",
@@ -77,33 +89,39 @@ export default {
 
     handleAddMenu: function (newMenu) {
       this.menus.push(newMenu);
+      this.initMealInfo();
     },
-    handleChangeFoodKind: function (foodKind) {
-      this.userSelectMealInfo.time = foodKind;
+
+    handleChangeTimeKind: function (timeKind) {
+      this.mealInfo["time"] = timeKind;
     },
 
     handleChangeMenu: function (menu) {
-      this.userSelectMealInfo.menu = menu;
+      this.mealInfo["menu"] = menu;
     },
 
-    handleAddMealInfo: function ({ time, menu }) {
-      this.useSelectMealTableInfo[time] = menu;
-      this.initUserSelectedMealInfo();
-      console.log(this.userSelectMealInfo);
-    },
-    handleUpdateMealDateInfo: function (newDate) {
-      this.useSelectMealTableInfo.date = newDate;
+    /**
+     *  mealInfo {'dinner':'김치찌개'} 를
+     *  totalInfo {date:'', dinner:'',...}에 반영
+     */
+    handleAddMealInfoToTotalMealInfo: function ({ time, menu }) {
+      this.totalMealInfo[time] = menu;
+      this.initMealInfo();
     },
 
-    handleAddMealTableInfo: function () {
-      this.mealTableInfos.push({ ...this.useSelectMealTableInfo });
-      console.log(this.useSelectMealTableInfo);
-      this.initUseSelectMealTableInfo();
-      console.log(this.useSelectMealTableInfo);
+    handleChangeTotalMealInfoDate: function (newDate) {
+      this.totalMealInfo["date"] = newDate;
+    },
+
+    handleAddMealTableTotalMealInfo: function () {
+      this.mealTableInfos.push({ ...this.totalMealInfo });
+
+      this.initTotalMealInfo();
+      this.initMealInfo();
     },
   },
   mounted() {
-    this.initUserSelectedMealInfo();
+    this.initMealInfo();
   },
 };
 </script>
